@@ -1,6 +1,8 @@
 # AI Lead Management & Qualification System
 ## Workflow Architecture
 ![Workflow Architecture](workflow-screenshot.png)
+## Google Sheets Output
+![Google Sheets Output](google-sheet-output.png)
 ## Overview
 
 An AI-powered lead management system built with n8n, Google Gemini, Gmail, and Google Sheets. The workflow automatically captures incoming leads, analyzes lead intent, scores lead quality, categorizes leads, detects duplicates, and sends instant notifications for high-priority opportunities.
