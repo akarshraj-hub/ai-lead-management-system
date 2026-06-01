@@ -1,0 +1,540 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cff2509a-500e-42b2-bcaf-f2325e3e960c",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1456,
+        0
+      ],
+      "id": "78d30a8e-693d-4e25-a4b6-61abd96dd68c",
+      "name": "Webhook",
+      "webhookId": "cff2509a-500e-42b2-bcaf-f2325e3e960c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc4757c6-70f9-443d-b035-c50ed77486b7",
+              "name": "name",
+              "value": "={{$json.body.name}}",
+              "type": "string"
+            },
+            {
+              "id": "bb36a252-20db-41ef-8595-71189bb8d811",
+              "name": "email",
+              "value": "={{$json.body.email}}",
+              "type": "string"
+            },
+            {
+              "id": "e2313542-755c-4afa-a428-9ebf02e6f983",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1248,
+        -288
+      ],
+      "id": "8aaf61c2-dc9a-4290-9d1e-7f31c0095d90",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this lead:\n\nName: {{ $json.name }}\nEmail: {{ $json.email }}\nMessage: {{ $json.message }}\n\nReturn ONLY valid JSON.\n\n{\n  \"interest_level\": \"\",\n  \"budget_level\": \"\",\n  \"urgency\": \"\",\n  \"lead_score\": \"\",\n\"lead_category\": \"\"\n}\nDo NOT use markdown.\nDo NOT use ```json.\nReturn raw JSON only.\nlead_category must be:\n- Hot\n- Warm\n- Cold",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1040,
+        -112
+      ],
+      "id": "fe1fa41f-23a8-4795-9fda-e6331fbe8d5a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1088,
+        224
+      ],
+      "id": "0ec0dde7-9cf0-499b-8f5c-020ccca6b8a6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wPpobqa762h0XMfp",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{$json.output}}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "interest_level",
+              "description": "Lead interest level (High, Medium, Low)"
+            },
+            {
+              "name": "budget_level",
+              "description": "Lead budget level (High, Medium, Low, Unknown)"
+            },
+            {
+              "name": "urgency",
+              "description": "Lead urgency level (High, Medium, Low)"
+            },
+            {
+              "name": "lead_score",
+              "type": "number",
+              "description": "Lead score as a number from 0 to 100."
+            },
+            {
+              "name": "lead_category",
+              "description": "Lead category based on lead quality.  Hot = High interest + High urgency Warm = Medium interest or medium urgency Cold = Low interest or low urgency"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -704,
+        -320
+      ],
+      "id": "5a9c4474-b484-4b58-9cd1-934bedb2d5c7",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        -16
+      ],
+      "id": "77bca4a1-27d0-4bc5-8437-01fc47d123cb",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wPpobqa762h0XMfp",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1i8QjkOH5bhpCX5Or4zueb9So8C2EZS_rg5UXaXwCZLk",
+          "mode": "list",
+          "cachedResultName": "AI Lead Management",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i8QjkOH5bhpCX5Or4zueb9So8C2EZS_rg5UXaXwCZLk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i8QjkOH5bhpCX5Or4zueb9So8C2EZS_rg5UXaXwCZLk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Email": "={{ $('Edit Fields').item.json.email }}",
+            "Message": "={{ $('Edit Fields').item.json.message }}",
+            "Interest level": "={{ $('Information Extractor').item.json.output.interest_level }}",
+            "Lead score": "={{ $('Information Extractor').item.json.output.lead_score }}",
+            "Lead category": "={{ $('Information Extractor').item.json.output.lead_category }}",
+            "Urgency": "={{ $('Information Extractor').item.json.output.urgency }}",
+            "Budget Level": "={{ $('Information Extractor').item.json.output.budget_level }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interest level",
+              "displayName": "Interest level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget Level",
+              "displayName": "Budget Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Urgency",
+              "displayName": "Urgency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead score",
+              "displayName": "Lead score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead category",
+              "displayName": "Lead category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        208
+      ],
+      "id": "14244b1f-9de3-4d73-b42c-1d5f02181ba5",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DKsShkx1GWPvns8C",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9db352cd-7995-44dc-aa93-1b1774cd986c",
+              "leftValue": "={{ $('Information Extractor').item.json.output.lead_category }}",
+              "rightValue": "=Hot",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        -64
+      ],
+      "id": "56ca9a1e-8a55-47d7-9e0f-0267ca40e46d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "your-email@example.com",
+        "subject": "🔥 New Hot Lead Received",
+        "message": "=🔥 New Hot Lead Received  \n  \n Name: {{ $('Edit Fields').item.json.name }}\n\n Email: {{ $('Edit Fields').item.json.email }}\n\n Message: {{ $('Edit Fields').item.json.message }}\n\n Lead Score:{{ $json.output.lead_score }}\n\n Lead Category: {{ $json.output.lead_category }}\n\n Interest Level:{{ $json.output.interest_level }}\n\n Urgency: {{ $json.output.urgency }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        -64
+      ],
+      "id": "76e37d78-3147-44e8-9b8c-da66ec34b353",
+      "name": "Send a message",
+      "webhookId": "bd24fce9-9666-441a-b002-696674f51d4f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uWi5LfauDEnA3Zgd",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1i8QjkOH5bhpCX5Or4zueb9So8C2EZS_rg5UXaXwCZLk",
+          "mode": "list",
+          "cachedResultName": "AI Lead Management",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i8QjkOH5bhpCX5Or4zueb9So8C2EZS_rg5UXaXwCZLk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i8QjkOH5bhpCX5Or4zueb9So8C2EZS_rg5UXaXwCZLk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $('Edit Fields').item.json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        -64
+      ],
+      "id": "0b36f108-869f-435c-bb60-ef9c33450c39",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DKsShkx1GWPvns8C",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f866aa63-efa8-4d2a-85c7-2c4d2881b2f6",
+              "leftValue": "={{ Object.keys($json).length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        -48
+      ],
+      "id": "47c36f81-0675-40d4-bd8b-7c199918d73c",
+      "name": "If1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f4983fa5-13f0-48bd-bc2e-3598a497d085",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2821b67b8993def21644aff496ede4ee52d6f81ea0c7e2a6e1197dea82653c08"
+  },
+  "id": "AW8YHemzAkCtewsp",
+  "tags": []
+}
